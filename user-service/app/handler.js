@@ -1,4 +1,4 @@
-module.exports.handler = async (event) => {
+export const Signup = async (event) => {
 	return {
 		statusCode: 200,
 		headers: {

@@ -12,7 +12,8 @@ functions:
       - httpApi:
           path: /signup
           method: post
- login:
+
+  login:
     handler: app/handler.Login
     events:
       - httpApi:

@@ -1,6 +1,10 @@
 service: user-service
 frameworkVersion: "3"
 
+plugins:
+  - serverless-offline
+  - serverless-plugin-typescript
+
 provider:
   name: aws
   runtime: nodejs18.x
@@ -69,6 +73,3 @@ functions:
       - httpApi:
           path: /payment
           method: get
-
-plugins:
-  - serverless-offline

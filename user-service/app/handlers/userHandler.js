@@ -1,6 +1,7 @@
 import middy from "@middy/core";
 import bodyParser from "@middy/http-json-body-parser";
 import { UserService } from "../service/userService.js";
+import { ErrorResponse } from "../utility/response.js";
 
 const service = new UserService();
 
@@ -10,7 +11,7 @@ export const Signup = middy((event) => {
 
 export const Login = middy((event) => {
 	return service.UserLogin(event);
-}).use(body());
+}).use(bodyParser());
 
 export const Verify = async (event) => {
 	const httpMethod = event.requestContext.http.method.toLowerCase();

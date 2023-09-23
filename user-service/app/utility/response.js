@@ -23,7 +23,7 @@ const formatResponse = (statusCode, message, data = null) => {
 	}
 };
 
-export const SucessResponse = (data) => {
+export const SuccessResponse = (data) => {
 	return formatResponse(200, "success", data);
 };
 

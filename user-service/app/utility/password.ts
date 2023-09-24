@@ -17,7 +17,7 @@ export const ValidatePassword = async (
 	savedPassword: string,
 	salt: string
 ) => {
-	return (await GetHashedPassword(enteredPassword, salt)) == savedPassword;
+	return (await GetHashedPassword(enteredPassword, salt)) === savedPassword;
 };
 
 export const GetToken = ({ user_id, email, phone, userType }: UserModel) => {

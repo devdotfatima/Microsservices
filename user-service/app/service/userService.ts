@@ -1,5 +1,6 @@
 import { APIGatewayProxyEventV2 } from "aws-lambda";
 import { plainToClass } from "class-transformer";
+import { autoInjectable } from "tsyringe";
 import { SignupInput } from "../models/dto/SignupInput";
 import { ErrorResponse, SuccessResponse } from "../utility/response";
 import { AppValidationError } from "../utility/errors";
@@ -10,9 +11,14 @@ import {
 	GetToken,
 	VerifyToken,
 } from "../utility/password";
+import { UserRepository } from "../repository/userRepository";
 
+@autoInjectable()
 export class UserService {
-	constructor() {}
+	repository: UserRepository;
+	constructor(repository: UserRepository) {
+		this.repository = repository;
+	}
 	async CreateUser(event: APIGatewayProxyEventV2) {
 		try {
 			const input = plainToClass(SignupInput, event.body);

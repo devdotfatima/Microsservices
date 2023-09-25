@@ -1,7 +1,7 @@
 import twilio from "twilio";
 
-const accountSid = "ACcb1f111751c78f9569465e085fd2edd7";
-const authToken = "b2bf75f87fe12d2a8b81ce8a4f1f5ce7";
+const accountSid = process.env.ACCOUNT_SID;
+const authToken = process.env.AUTH_TOKEN;
 
 const client = twilio(accountSid, authToken);
 

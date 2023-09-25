@@ -20,7 +20,8 @@
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",
-    "tsyringe": "^4.8.0"
+    "tsyringe": "^4.8.0",
+    "twilio": "^4.18.0"
   },
   "devDependencies": {
     "serverless-offline": "^12.0.4",

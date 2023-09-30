@@ -141,5 +141,7 @@ export class UserService {
 		const token = event.headers.authorization;
 		const payload = await VerifyToken(token);
 		if (!payload) return ErrorResponse(403, "authorization failed");
+		const result = await this.repository.getUserProfile(payload.user_id);
+		return SuccessResponse(result);
 	}
 }

@@ -29,11 +29,11 @@ export const Verify = middy((event: APIGatewayProxyEventV2) => {
 export const Profile = middy((event: APIGatewayProxyEventV2) => {
 	const httpMethod = event.requestContext.http.method.toLowerCase();
 	if (httpMethod === "post") {
-		// return service.CreateProfile(event);
+		return service.CreateProfile(event);
 	} else if (httpMethod === "put") {
-		// return service.EditProfile(event);
+		return service.EditProfile(event);
 	} else if (httpMethod === "get") {
-		// return service.GetProfile(event);
+		return service.GetProfile(event);
 	} else {
 		return service.ResponseWithError(event);
 	}

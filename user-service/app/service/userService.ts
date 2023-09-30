@@ -19,6 +19,7 @@ import {
 } from "../utility/notification";
 import { VerificationInput } from "../models/dto/VerificationInput";
 import { TimeDifference } from "../utility/datehelper";
+import { ProfileInput } from "../models/dto/ProfileInput";
 
 @autoInjectable()
 export class UserService {
@@ -74,6 +75,7 @@ export class UserService {
 			return ErrorResponse(500, error);
 		}
 	}
+
 	async GetVerificationToken(event: APIGatewayProxyEventV2) {
 		const token = event.headers.authorization;
 		const payload = await VerifyToken(token);
@@ -108,5 +110,36 @@ export class UserService {
 			}
 		}
 		return SuccessResponse({ message: "User verified" });
+	}
+
+	async CreateProfile(event: APIGatewayProxyEventV2) {
+		const token = event.headers.authorization;
+		const payload = await VerifyToken(token);
+		if (!payload) return ErrorResponse(403, "authorization failed");
+
+		const input = plainToClass(ProfileInput, event.body);
+		const error = await AppValidationError(input);
+		if (error) {
+			return ErrorResponse(404, error);
+		}
+
+		const result = await this.repository.createUserProfile(
+			payload.user_id,
+			input
+		);
+
+		return SuccessResponse({ message: "User verified" });
+	}
+
+	async EditProfile(event: APIGatewayProxyEventV2) {
+		const token = event.headers.authorization;
+		const payload = await VerifyToken(token);
+		if (!payload) return ErrorResponse(403, "authorization failed");
+	}
+
+	async GetProfile(event: APIGatewayProxyEventV2) {
+		const token = event.headers.authorization;
+		const payload = await VerifyToken(token);
+		if (!payload) return ErrorResponse(403, "authorization failed");
 	}
 }

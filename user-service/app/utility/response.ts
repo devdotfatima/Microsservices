@@ -28,7 +28,7 @@ export const SuccessResponse = (data: object) => {
 };
 
 export const ErrorResponse = (code = 1000, error: unknown) => {
-	if (Array.isArray(error[0].children)) {
+	if (Array.isArray(error[0].children) && error[0].children.length > 0) {
 		const errorObject = error[0].children[0].constraints;
 		const errorMesssage =
 			errorObject[Object.keys(errorObject)[0]] || "Error Occured";
@@ -40,7 +40,5 @@ export const ErrorResponse = (code = 1000, error: unknown) => {
 			errorObject[Object.keys(errorObject)[0]] || "Error Occured";
 		return formatResponse(code, errorMesssage, errorMesssage);
 	}
-
-	console.log("333333");
 	return formatResponse(code, `${error}`, error);
 };

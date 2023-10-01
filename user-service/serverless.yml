@@ -31,6 +31,7 @@ functions:
       - httpApi:
           path: /login
           method: post
+
   verify:
     handler: app/handler.Verify
     events:
@@ -40,6 +41,7 @@ functions:
       - httpApi:
           path: /verify
           method: post
+
   profile:
     handler: app/handler.Profile
     events:
@@ -52,6 +54,7 @@ functions:
       - httpApi:
           path: /user
           method: get
+
   cart:
     handler: app/handler.Cart
     events:
@@ -64,6 +67,7 @@ functions:
       - httpApi:
           path: /cart
           method: get
+
   payment:
     handler: app/handler.Payment
     events:

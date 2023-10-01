@@ -27,9 +27,11 @@ export class UserService {
 	constructor(repository: UserRepository) {
 		this.repository = repository;
 	}
+
 	async ResponseWithError(event: APIGatewayProxyEventV2) {
 		return ErrorResponse(404, "requested method is not supported!");
 	}
+
 	async CreateUser(event: APIGatewayProxyEventV2) {
 		try {
 			const input = plainToClass(SignupInput, event.body);
@@ -113,35 +115,63 @@ export class UserService {
 	}
 
 	async CreateProfile(event: APIGatewayProxyEventV2) {
-		const token = event.headers.authorization;
-		const payload = await VerifyToken(token);
-		if (!payload) return ErrorResponse(403, "authorization failed");
+		try {
+			const token = event.headers.authorization;
+			const payload = await VerifyToken(token);
+			if (!payload) return ErrorResponse(403, "authorization failed");
 
-		const input = plainToClass(ProfileInput, event.body);
-		const error = await AppValidationError(input);
-		if (error) {
-			return ErrorResponse(404, error);
+			const input = plainToClass(ProfileInput, event.body);
+			const error = await AppValidationError(input);
+			if (error) {
+				return ErrorResponse(404, error);
+			}
+
+			const result = await this.repository.createUserProfile(
+				payload.user_id,
+				input
+			);
+
+			return SuccessResponse({ message: "Profile created" });
+		} catch (error) {
+			console.log(error);
+			return ErrorResponse(500, error);
 		}
-
-		const result = await this.repository.createUserProfile(
-			payload.user_id,
-			input
-		);
-
-		return SuccessResponse({ message: "User verified" });
 	}
 
 	async EditProfile(event: APIGatewayProxyEventV2) {
-		const token = event.headers.authorization;
-		const payload = await VerifyToken(token);
-		if (!payload) return ErrorResponse(403, "authorization failed");
+		try {
+			const token = event.headers.authorization;
+			const payload = await VerifyToken(token);
+			if (!payload) return ErrorResponse(403, "authorization failed");
+
+			const input = plainToClass(ProfileInput, event.body);
+			const error = await AppValidationError(input);
+			if (error) {
+				return ErrorResponse(404, error);
+			}
+
+			const result = await this.repository.editUserProfile(
+				payload.user_id,
+				input
+			);
+
+			return SuccessResponse({ message: "Profile Updated" });
+		} catch (error) {
+			console.log(error);
+			return ErrorResponse(500, error);
+		}
 	}
 
 	async GetProfile(event: APIGatewayProxyEventV2) {
-		const token = event.headers.authorization;
-		const payload = await VerifyToken(token);
-		if (!payload) return ErrorResponse(403, "authorization failed");
-		const result = await this.repository.getUserProfile(payload.user_id);
-		return SuccessResponse(result);
+		try {
+			const token = event.headers.authorization;
+			const payload = await VerifyToken(token);
+			if (!payload) return ErrorResponse(403, "authorization failed");
+			const result = await this.repository.getUserProfile(payload.user_id);
+			return SuccessResponse(result);
+		} catch (error) {
+			console.log(error);
+			return ErrorResponse(500, error);
+		}
 	}
 }

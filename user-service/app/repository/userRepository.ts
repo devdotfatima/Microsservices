@@ -115,4 +115,30 @@ export class UserRepository extends DBOperation {
 
 		return userProfile;
 	}
+
+	async editUserProfile(
+		userId: number,
+		{
+			firstName,
+			lastName,
+			userType,
+			address: { addressLine1, addressLine2, city, postCode, country, id },
+		}: ProfileInput
+	) {
+		await this.updateUser(userId, firstName, lastName, userType);
+		const queryString =
+			"UPDATE address SET address_line1=$1, address_line2=$2, city=$3, post_code=$4, country=$5 WHERE id=$6";
+		const addressValues = [
+			addressLine1,
+			addressLine2,
+			city,
+			postCode,
+			country,
+			id,
+		];
+		const addressResult = await this.executeQuery(queryString, addressValues);
+		if (addressResult.rowCount < 1) {
+			throw new Error("Error while updating profile");
+		}
+	}
 }

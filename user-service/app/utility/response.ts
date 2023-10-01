@@ -28,13 +28,17 @@ export const SuccessResponse = (data: object) => {
 };
 
 export const ErrorResponse = (code = 1000, error: unknown) => {
-	if (Array.isArray(error[0].children) && error[0].children.length > 0) {
-		const errorObject = error[0].children[0].constraints;
-		const errorMesssage =
-			errorObject[Object.keys(errorObject)[0]] || "Error Occured";
-		return formatResponse(code, errorMesssage, errorMesssage);
-	}
+	console.log(error);
+
 	if (Array.isArray(error)) {
+		if (Array.isArray(error[0].children) && error[0].children.length > 0) {
+			console.log("here");
+			const errorObject = error[0].children[0].constraints;
+			const errorMesssage =
+				errorObject[Object.keys(errorObject)[0]] || "Error Occured";
+			return formatResponse(code, errorMesssage, errorMesssage);
+		}
+		console.log("here");
 		const errorObject = error[0].constraints;
 		const errorMesssage =
 			errorObject[Object.keys(errorObject)[0]] || "Error Occured";

@@ -174,4 +174,10 @@ export class UserService {
 			return ErrorResponse(500, error);
 		}
 	}
+
+	async CreateCart(event: APIGatewayProxyEventV2) {
+		return SuccessResponse({
+			message: "Created cart successfully",
+		});
+	}
 }

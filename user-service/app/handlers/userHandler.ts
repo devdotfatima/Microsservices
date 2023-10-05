@@ -41,7 +41,7 @@ export const Profile = middy((event: APIGatewayProxyEventV2) => {
 export const Cart = middy((event: APIGatewayProxyEventV2) => {
 	const httpMethod = event.requestContext.http.method.toLowerCase();
 	if (httpMethod === "post") {
-		// return service.CreateCart(event);
+		return service.CreateCart(event);
 	} else if (httpMethod === "put") {
 		// return service.UpdateCart(event);
 	} else if (httpMethod === "get") {

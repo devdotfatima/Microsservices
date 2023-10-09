@@ -31,4 +31,23 @@ export class ProductRepository {
 	async getProductById(id: string) {
 		return products.findById(id);
 	}
+
+	async updateProduct({
+		id,
+		name,
+		description,
+		price,
+		category_id,
+		image_url,
+		availability,
+	}: ProductInput) {
+		let existingProduct = (await products.findById(id)) as ProductDoc;
+		existingProduct.name = name;
+		existingProduct.description = description;
+		existingProduct.price = price;
+		existingProduct.category_id = category_id;
+		existingProduct.image_url = image_url;
+		existingProduct.availability = availability;
+		return existingProduct.save();
+	}
 }

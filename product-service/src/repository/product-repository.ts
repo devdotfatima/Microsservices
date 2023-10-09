@@ -20,4 +20,11 @@ export class ProductRepository {
 			availability: true,
 		});
 	}
+
+	async getAllProducts(offset = 0, pages?: number) {
+		return products
+			.find()
+			.skip(offset)
+			.limit(pages ? pages : 500);
+	}
 }

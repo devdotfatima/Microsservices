@@ -37,9 +37,21 @@ export class ProductService {
 		const data = await this.repository.getProductById(productId);
 		return SuccessResponse(data);
 	}
+
 	async editProduct(event: APIGatewayEvent) {
-		return SuccessResponse({ msg: "Products Edited" });
+		const productId = event.pathParameters?.id;
+		if (!productId) return ErrorResponse(403, "please provide product id");
+
+		const input = plainToClass(ProductInput, JSON.parse(event.body!));
+		const error = await AppValidationError(input);
+		if (error) return ErrorResponse(404, error);
+
+		input.id = productId;
+		const data = await this.repository.updateProduct(input);
+
+		return SuccessResponse(data);
 	}
+
 	async deleteProduct(event: APIGatewayEvent) {
 		return SuccessResponse({ msg: "Products Deleted" });
 	}

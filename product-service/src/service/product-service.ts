@@ -10,6 +10,7 @@ export class ProductService {
 	constructor(repository: ProductRepository) {
 		this.repository = repository;
 	}
+
 	async createProduct(event: APIGatewayEvent) {
 		try {
 			const input = plainToClass(ProductInput, JSON.parse(event.body!));
@@ -23,12 +24,18 @@ export class ProductService {
 			return ErrorResponse(500, error);
 		}
 	}
+
 	async getProducts(event: APIGatewayEvent) {
 		const data = await this.repository.getAllProducts();
 		return SuccessResponse(data);
 	}
+
 	async getProduct(event: APIGatewayEvent) {
-		return SuccessResponse({ msg: "Product Returned" });
+		const productId = event.pathParameters?.id;
+		if (!productId) return ErrorResponse(403, "please provide product id");
+
+		const data = await this.repository.getProductById(productId);
+		return SuccessResponse(data);
 	}
 	async editProduct(event: APIGatewayEvent) {
 		return SuccessResponse({ msg: "Products Edited" });

@@ -27,4 +27,8 @@ export class ProductRepository {
 			.skip(offset)
 			.limit(pages ? pages : 500);
 	}
+
+	async getProductById(id: string) {
+		return products.findById(id);
+	}
 }

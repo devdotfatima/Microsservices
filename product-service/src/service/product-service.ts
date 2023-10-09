@@ -53,6 +53,13 @@ export class ProductService {
 	}
 
 	async deleteProduct(event: APIGatewayEvent) {
-		return SuccessResponse({ msg: "Products Deleted" });
+		const productId = event.pathParameters?.id;
+		if (!productId) return ErrorResponse(403, "please provide product id");
+
+		const { category_id, deleteResult } = await this.repository.deleteProduct(
+			productId
+		);
+
+		return SuccessResponse(deleteResult);
 	}
 }

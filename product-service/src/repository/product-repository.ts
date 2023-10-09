@@ -50,4 +50,10 @@ export class ProductRepository {
 		existingProduct.availability = availability;
 		return existingProduct.save();
 	}
+
+	async deleteProduct(id: string) {
+		const { category_id } = (await products.findById(id)) as ProductDoc;
+		const deleteResult = await products.deleteOne({ _id: id });
+		return { category_id, deleteResult };
+	}
 }

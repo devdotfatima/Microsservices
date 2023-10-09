@@ -24,7 +24,8 @@ export class ProductService {
 		}
 	}
 	async getProducts(event: APIGatewayEvent) {
-		return SuccessResponse({ msg: "Products Returned" });
+		const data = await this.repository.getAllProducts();
+		return SuccessResponse(data);
 	}
 	async getProduct(event: APIGatewayEvent) {
 		return SuccessResponse({ msg: "Product Returned" });

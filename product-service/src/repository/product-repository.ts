@@ -1,4 +1,4 @@
-import { ProductDoc, products } from "../models/product-model";
+import { ProductDoc, products } from "../models";
 import { ProductInput } from "../models/dto/product-input";
 
 export class ProductRepository {

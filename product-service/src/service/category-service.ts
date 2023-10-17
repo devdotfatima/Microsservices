@@ -57,4 +57,11 @@ export class CategoryService {
 		const data = await this.repository.updateCategory(input);
 		return SuccessResponse(data);
 	}
+
+	async deleteCategory(event: APIGatewayEvent) {
+		const categoryId = event.pathParameters?.id;
+		if (!categoryId) return ErrorResponse(403, "please provide category id");
+		const data = await this.repository.deleteCategory(categoryId);
+		return SuccessResponse(data);
+	}
 }

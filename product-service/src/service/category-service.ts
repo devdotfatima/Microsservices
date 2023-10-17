@@ -22,4 +22,14 @@ export class CategoryService {
 		const data = await this.repository.createCategory(input);
 		return SuccessResponse(data);
 	}
+
+	async getCategories(event: APIGatewayEvent) {
+		const type = event.queryStringParameters?.type;
+		if (type === "top") {
+			const data = await this.repository.getTopCategories();
+			return SuccessResponse(data);
+		}
+		const data = await this.repository.getAllCategories();
+		return SuccessResponse(data);
+	}
 }

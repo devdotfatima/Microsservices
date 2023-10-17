@@ -71,4 +71,16 @@ export class CategoryRepository {
 				model: "products",
 			});
 	}
+
+	async updateCategory({ id, name, displayOrder, imageUrl }: CategoryInput) {
+		let category = (await categories.findById(id)) as CategoryDoc;
+		category.name = name;
+		category.displayOrder = displayOrder;
+		category.imageUrl = imageUrl;
+		return category.save();
+	}
+
+	async deleteCategory(id: string) {
+		return categories.deleteOne({ _id: id });
+	}
 }

@@ -46,4 +46,15 @@ export class CategoryService {
 		);
 		return SuccessResponse(data);
 	}
+
+	async editCategory(event: APIGatewayEvent) {
+		const categoryId = event.pathParameters?.id;
+		if (!categoryId) return ErrorResponse(403, "please provide category id");
+		const input = plainToClass(CategoryInput, JSON.parse(event.body!));
+		const error = await AppValidationError(input);
+		if (error) return ErrorResponse(404, error);
+		input.id = categoryId;
+		const data = await this.repository.updateCategory(input);
+		return SuccessResponse(data);
+	}
 }

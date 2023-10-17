@@ -4,6 +4,7 @@ import { ProductRepository } from "../repository/product-repository";
 import { ErrorResponse, SuccessResponse } from "../utility/response";
 import { ProductInput } from "../models/dto/product-input";
 import { AppValidationError } from "../utility/errors";
+import { CategoryRepository } from "../repository/category-repository";
 
 export class ProductService {
 	repository: ProductRepository;
@@ -17,7 +18,10 @@ export class ProductService {
 			const error = await AppValidationError(input);
 			if (error) return ErrorResponse(404, error);
 			const data = await this.repository.createProduct(input);
-
+			await new CategoryRepository().addItem({
+				id: input.category_id,
+				products: [data._id],
+			});
 			return SuccessResponse(data);
 		} catch (error) {
 			console.log(error);
@@ -59,7 +63,10 @@ export class ProductService {
 		const { category_id, deleteResult } = await this.repository.deleteProduct(
 			productId
 		);
-
+		await new CategoryRepository().addItem({
+			id: category_id,
+			products: [productId],
+		});
 		return SuccessResponse(deleteResult);
 	}
 }

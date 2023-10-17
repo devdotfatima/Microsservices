@@ -29,4 +29,35 @@ export class CategoryRepository {
 
 		return newCategory;
 	}
+
+	async getAllCategories(offset = 0, perPage?: number) {
+		return categories
+			.find({ parentId: null })
+			.populate({
+				path: "subCategories",
+				model: "categories",
+				populate: {
+					path: "subCategories",
+					model: "categories",
+				},
+			})
+			.skip(offset)
+			.limit(perPage ? perPage : 100);
+	}
+
+	async getTopCategories() {
+		return categories
+			.find(
+				{ parentId: { $ne: null } },
+				{
+					products: { $slice: 10 },
+				}
+			)
+			.populate({
+				path: "products",
+				model: "products",
+			})
+			.sort({ displayOrder: "descending" })
+			.limit(10);
+	}
 }

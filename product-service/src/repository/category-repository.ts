@@ -60,4 +60,15 @@ export class CategoryRepository {
 			.sort({ displayOrder: "descending" })
 			.limit(10);
 	}
+
+	async getCategoryById(id: string, offset = 0, perPage?: number) {
+		return categories
+			.findById(id, {
+				products: { $slice: [offset, perPage ? perPage : 100] },
+			})
+			.populate({
+				path: "products",
+				model: "products",
+			});
+	}
 }

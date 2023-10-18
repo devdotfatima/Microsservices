@@ -38,19 +38,6 @@ export const Profile = middy((event: APIGatewayProxyEventV2) => {
 	}
 }).use(bodyParser());
 
-export const Cart = middy((event: APIGatewayProxyEventV2) => {
-	const httpMethod = event.requestContext.http.method.toLowerCase();
-	if (httpMethod === "post") {
-		return service.CreateCart(event);
-	} else if (httpMethod === "put") {
-		// return service.UpdateCart(event);
-	} else if (httpMethod === "get") {
-		// return service.GetCart(event);
-	} else {
-		return service.ResponseWithError(event);
-	}
-}).use(bodyParser());
-
 export const Payment = middy((event: APIGatewayProxyEventV2) => {
 	const httpMethod = event.requestContext.http.method.toLowerCase();
 	if (httpMethod === "post") {

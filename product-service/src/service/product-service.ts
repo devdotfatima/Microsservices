@@ -1,10 +1,11 @@
 import { plainToClass } from "class-transformer";
-import { APIGatewayEvent } from "aws-lambda";
+import { APIGatewayEvent, APIGatewayProxyEvent } from "aws-lambda";
 import { ProductRepository } from "../repository/product-repository";
 import { ErrorResponse, SuccessResponse } from "../utility/response";
 import { ProductInput } from "../models/dto/product-input";
 import { AppValidationError } from "../utility/errors";
 import { CategoryRepository } from "../repository/category-repository";
+import { ServiceInput } from "../models/dto/service-input";
 
 export class ProductService {
 	repository: ProductRepository;
@@ -68,5 +69,25 @@ export class ProductService {
 			products: [productId],
 		});
 		return SuccessResponse(deleteResult);
+	}
+
+	// http calls // later stage we will convert this thing to RPC & Queue
+	async handleQueueOperation(event: APIGatewayProxyEvent) {
+		const input = plainToClass(ServiceInput, JSON.parse(event.body!));
+		const error = await AppValidationError(input);
+		if (error) return ErrorResponse(404, error);
+
+		console.log("INPUT", input);
+
+		const { _id, name, price, image_url } =
+			await this.repository.getProductById(input.productId);
+		console.log("PRODUCT DETAILS", { _id, name, price, image_url });
+
+		return SuccessResponse({
+			product_id: _id,
+			name,
+			price,
+			image_url,
+		});
 	}
 }

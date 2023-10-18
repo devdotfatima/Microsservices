@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 mongoose.set("strictQuery", false);
 
 const ConnectDB = async () => {
-	const DB_URL = "mongodb+srv://******/product-microservice";
+	const DB_URL = process.env.DB_URL;
 
 	try {
 		await mongoose.connect(DB_URL);

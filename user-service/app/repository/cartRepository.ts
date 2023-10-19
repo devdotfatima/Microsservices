@@ -28,4 +28,17 @@ export class CartRepository extends DBOperation {
 		}
 		return result.rows[0] as ShoppingCartModel;
 	}
+
+	async findCartItemById(cartId: number) {}
+
+	async findCartItemByProductId(productId: string, cartId: number) {
+		const queryString =
+			"SELECT product_id, price, item_qty FROM cart_items WHERE product_id=$1 AND cartId=$2 ";
+		const values = [productId, cartId];
+		const result = await this.executeQuery(queryString, values);
+		if (result.rowCount < 1) {
+			return false;
+		}
+		return result.rows[0] as CartItemModel;
+	}
 }

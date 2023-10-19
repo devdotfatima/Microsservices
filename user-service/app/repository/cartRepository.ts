@@ -74,4 +74,15 @@ export class CartRepository extends DBOperation {
 		}
 		return result.rows[0] as CartItemModel;
 	}
+
+	async findCartItemsByCartId(cartId: number) {
+		const queryString =
+			"SELECT product_id, name, image_url, price, item_qty FROM cart_items WHERE cartId=$1 ";
+		const values = [cartId];
+		const result = await this.executeQuery(queryString, values);
+		if (result.rowCount < 1) {
+			return [];
+		}
+		return result.rows as CartItemModel[];
+	}
 }

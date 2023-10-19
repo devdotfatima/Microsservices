@@ -2,14 +2,14 @@ import { APIGatewayProxyEventV2 } from "aws-lambda";
 import middy from "@middy/core";
 import bodyParser from "@middy/http-json-body-parser";
 import { CartService } from "./../service/cartService";
-// import { CartRepository } from "./../repository/cartRepository";
+import { CartRepository } from "./../repository/cartRepository";
 
-// const cartService = new CartService(new CartRepository());
+const cartService = new CartService(new CartRepository());
 
 export const Cart = middy((event: APIGatewayProxyEventV2) => {
 	const httpMethod = event.requestContext.http.method.toLowerCase();
 	if (httpMethod === "post") {
-		// return service.CreateCart(event);
+		return cartService.CreateCart(event);
 	} else if (httpMethod === "put") {
 		// return service.UpdateCart(event);
 	} else if (httpMethod === "get") {

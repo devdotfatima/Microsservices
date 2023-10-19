@@ -41,4 +41,22 @@ export class CartRepository extends DBOperation {
 		}
 		return result.rows[0] as CartItemModel;
 	}
+
+	async createCartItem({
+		cart_id,
+		product_id,
+		name,
+		image_url,
+		price,
+		item_qty,
+	}: CartItemModel) {
+		const queryString =
+			"INSERT INTO cart_items (cart_id, product_id,name,image_url,price,item_qty) VALUES($1,$2,$3,$4,$5,$6) RETURNING *";
+		const values = [cart_id, product_id, name, image_url, price, item_qty];
+		const result = await this.executeQuery(queryString, values);
+		if (result.rowCount < 1) {
+			return false;
+		}
+		return result.rows[0] as CartItemModel;
+	}
 }

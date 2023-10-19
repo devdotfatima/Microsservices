@@ -17,4 +17,15 @@ export class CartRepository extends DBOperation {
 		}
 		return result.rows[0] as ShoppingCartModel;
 	}
+
+	async createShoppingCart(userId: number) {
+		const queryString =
+			"INSERT INTO shopping_carts (user_id) VALUES ($1) RETURNING *";
+		const values = [userId];
+		const result = await this.executeQuery(queryString, values);
+		if (result.rowCount < 1) {
+			return false;
+		}
+		return result.rows[0] as ShoppingCartModel;
+	}
 }

@@ -1,4 +1,5 @@
 import { APIGatewayProxyEventV2 } from "aws-lambda";
+import aws from "aws-sdk";
 import { SuccessResponse, ErrorResponse } from "../utility/response";
 import { autoInjectable } from "tsyringe";
 import { plainToClass } from "class-transformer";
@@ -6,9 +7,8 @@ import { AppValidationError } from "../utility/errors";
 import { VerifyToken } from "../utility/password";
 import { CartRepository } from "../repository/cartRepository";
 import { CartInput, UpdateCartInput } from "../models/dto/cartInput";
-// import { CartItemModel } from "../models/CartItemsModel";
-// import { PullData } from "../message-queue";
-import aws from "aws-sdk";
+import { PullData } from "../message-queue";
+import { CartItemModel } from "../models/CartItemModel";
 
 @autoInjectable()
 export class CartService {
@@ -33,8 +33,47 @@ export class CartService {
 			if (error) {
 				return ErrorResponse(404, error);
 			}
+			let currentCart = await this.repository.findShoppingCart(payload.user_id);
+			if (!currentCart)
+				currentCart = await this.repository.createShoppingCart(payload.user_id);
+			if (!currentCart) {
+				return ErrorResponse(500, "create cart is failed!");
+			}
+			// find the item if exist
+			let currentProduct = await this.repository.findCartItemByProductId(
+				input.productId,
+				currentCart.cart_id
+			);
+			if (currentProduct) {
+				// if exist update the qty
+				await this.repository.updateCartItemByProductId(
+					input.productId,
+					currentCart.cart_id,
+					(currentProduct.item_qty += input.qty)
+				);
+			} else {
+				// if does not call Product service to get product information
+				const { data, status } = await PullData({
+					action: "PULL_PRODUCT_DATA",
+					productId: input.productId,
+				});
+				console.log("Getting Product", data);
+				if (status !== 200) {
+					return ErrorResponse(500, "failed to get product data!");
+				}
 
-			return SuccessResponse({ message: "Cart Created" });
+				let cartItem = data.data as CartItemModel;
+				cartItem.cart_id = currentCart.cart_id;
+				cartItem.item_qty = input.qty;
+				// Finally create cart item
+				await this.repository.createCartItem(cartItem);
+			}
+
+			// return all cart items to client
+			const cartItems = await this.repository.findCartItemsByCartId(
+				currentCart.cart_id
+			);
+			return SuccessResponse(cartItems);
 		} catch (error) {
 			console.log(error);
 			return ErrorResponse(500, error);

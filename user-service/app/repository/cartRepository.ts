@@ -85,4 +85,22 @@ export class CartRepository extends DBOperation {
 		}
 		return result.rows as CartItemModel[];
 	}
+
+	async findCartItems(userId: number) {
+		const queryString = `SELECT 
+    ci.cart_id,
+    ci.item_id,
+    ci.product_id,
+    ci.name,
+    ci.price,
+    ci.item_qty,
+    ci.image_url,
+    ci.created_at FROM shopping_carts sc INNER JOIN cart_items ci ON sc.cart_id=ci.cart_id WHERE sc.user_id=$1`;
+		const values = [userId];
+		const result = await this.executeQuery(queryString, values);
+		if (result.rowCount < 1) {
+			return [];
+		}
+		return result.rows[0] as CartItemModel[];
+	}
 }

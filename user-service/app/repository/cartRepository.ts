@@ -33,7 +33,7 @@ export class CartRepository extends DBOperation {
 
 	async findCartItemByProductId(productId: string, cartId: number) {
 		const queryString =
-			"SELECT product_id, price, item_qty FROM cart_items WHERE product_id=$1 AND cartId=$2 ";
+			"SELECT product_id, price, item_qty FROM cart_items WHERE product_id=$1 AND cart_id=$2 ";
 		const values = [productId, cartId];
 		const result = await this.executeQuery(queryString, values);
 		if (result.rowCount < 1) {
@@ -66,7 +66,7 @@ export class CartRepository extends DBOperation {
 		qty: number
 	) {
 		const queryString =
-			"UPDATE cart_items SET item_qty=$1 WHERE product_id=$2 AND cartId=$3  RETURNING *";
+			"UPDATE cart_items SET item_qty=$1 WHERE product_id=$2 AND cart_id=$3  RETURNING *";
 		const values = [qty, productId, cartId];
 		const result = await this.executeQuery(queryString, values);
 		if (result.rowCount < 1) {
@@ -77,7 +77,7 @@ export class CartRepository extends DBOperation {
 
 	async findCartItemsByCartId(cartId: number) {
 		const queryString =
-			"SELECT product_id, name, image_url, price, item_qty FROM cart_items WHERE cartId=$1 ";
+			"SELECT product_id, name, image_url, price, item_qty FROM cart_items WHERE cart_id=$1 ";
 		const values = [cartId];
 		const result = await this.executeQuery(queryString, values);
 		if (result.rowCount < 1) {

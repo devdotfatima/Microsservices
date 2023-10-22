@@ -57,7 +57,6 @@ export class CartService {
 					action: "PULL_PRODUCT_DATA",
 					productId: input.productId,
 				});
-				console.log("Getting Product", data);
 				if (status !== 200) {
 					return ErrorResponse(500, "failed to get product data!");
 				}
@@ -74,6 +73,19 @@ export class CartService {
 				currentCart.cart_id
 			);
 			return SuccessResponse(cartItems);
+		} catch (error) {
+			console.log(error);
+			return ErrorResponse(500, error);
+		}
+	}
+
+	async ViewCart(event: APIGatewayProxyEventV2) {
+		try {
+			const token = event.headers.authorization;
+			const payload = await VerifyToken(token);
+			if (!payload) return ErrorResponse(403, "authorization failed");
+			const result = await this.repository.findCartItems(payload.user_id);
+			return SuccessResponse(result);
 		} catch (error) {
 			console.log(error);
 			return ErrorResponse(500, error);

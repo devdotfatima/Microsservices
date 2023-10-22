@@ -91,4 +91,29 @@ export class CartService {
 			return ErrorResponse(500, error);
 		}
 	}
+
+	async UpdateCart(event: APIGatewayProxyEventV2) {
+		try {
+			const token = event.headers.authorization;
+			const payload = await VerifyToken(token);
+			const cartItemId = Number(event.pathParameters.id);
+			if (!payload) return ErrorResponse(403, "authorization failed!");
+
+			const input = plainToClass(UpdateCartInput, event.body);
+			const error = await AppValidationError(input);
+			if (error) return ErrorResponse(404, error);
+
+			const cartItem = await this.repository.updateCartItemById(
+				cartItemId,
+				input.qty
+			);
+			if (cartItem) {
+				return SuccessResponse(cartItem);
+			}
+			return ErrorResponse(404, "item does not exist");
+		} catch (error) {
+			console.log(error);
+			return ErrorResponse(500, error);
+		}
+	}
 }

@@ -79,16 +79,26 @@ export class UserService {
 	}
 
 	async GetVerificationToken(event: APIGatewayProxyEventV2) {
-		const token = event.headers.authorization;
-		const payload = await VerifyToken(token);
-		if (!payload) return ErrorResponse(403, "authorization failed");
+		try {
+			const token = event.headers.authorization;
+			const payload = await VerifyToken(token);
+			if (!payload) return ErrorResponse(403, "authorization failed");
+			const { code, expiry } = GenerateAccessCode();
 
-		const { code, expiry } = GenerateAccessCode();
-		await this.repository.updateVerificationCode(payload.user_id, code, expiry);
-		const response = await SendVerificationCode(code, payload.phone);
-		return SuccessResponse({
-			message: "verification code is sent to your registered mobile number!",
-		});
+			await this.repository.updateVerificationCode(
+				payload.user_id,
+				code,
+				expiry
+			);
+			const response = await SendVerificationCode(code, payload.phone);
+
+			return SuccessResponse({
+				message: "verification code is sent to your registered mobile number!",
+			});
+		} catch (error) {
+			console.log(error);
+			return ErrorResponse(500, error);
+		}
 	}
 
 	async VerifyUser(event: APIGatewayProxyEventV2) {
@@ -96,7 +106,7 @@ export class UserService {
 		const payload = await VerifyToken(token);
 		if (!payload) return ErrorResponse(403, "authorization failed");
 
-		const input = plainToClass(VerificationInput, event.body);
+		const input = plainToClass(VerificationInput, JSON.parse(event.body!));
 		const error = await AppValidationError(input);
 		if (error) return ErrorResponse(404, error);
 		const { verification_code, expiry } = await this.repository.findAccount(

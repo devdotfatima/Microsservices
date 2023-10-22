@@ -114,4 +114,10 @@ export class CartRepository extends DBOperation {
 		}
 		return result.rows[0] as CartItemModel;
 	}
+
+	async deleteCartItem(id: number) {
+		const queryString = "DELETE FROM cart_items WHERE item_id=$1";
+		const values = [id];
+		return this.executeQuery(queryString, values);
+	}
 }

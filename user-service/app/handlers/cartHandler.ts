@@ -14,6 +14,8 @@ export const Cart = middy((event: APIGatewayProxyEventV2) => {
 		return cartService.UpdateCart(event);
 	} else if (httpMethod === "get") {
 		return cartService.ViewCart(event);
+	} else if (httpMethod === "delete") {
+		return cartService.DeleteCart(event);
 	} else {
 		return cartService.ResponseWithError(event);
 	}

@@ -13,9 +13,9 @@ export const Cart = middy((event: APIGatewayProxyEventV2) => {
 	} else if (httpMethod === "put") {
 		// return service.UpdateCart(event);
 	} else if (httpMethod === "get") {
-		// return service.GetCart(event);
+		return cartService.ViewCart(event);
 	} else {
-		// return service.ResponseWithError(event);
+		return cartService.ResponseWithError(event);
 	}
 }).use(bodyParser());
 

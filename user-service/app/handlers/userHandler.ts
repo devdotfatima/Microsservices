@@ -14,7 +14,18 @@ export const Login = middy((event: APIGatewayProxyEventV2) => {
 	return service.UserLogin(event);
 }).use(bodyParser());
 
-export const Verify = middy((event: APIGatewayProxyEventV2) => {
+// export const Verify = middy((event: APIGatewayProxyEventV2) => {
+// 	const httpMethod = event.requestContext.http.method.toLowerCase();
+// 	if (httpMethod === "post") {
+// 		return service.VerifyUser(event);
+// 	} else if (httpMethod === "get") {
+// 		return service.GetVerificationToken(event);
+// 	} else {
+// 		return service.ResponseWithError(event);
+// 	}
+// }).use(bodyParser());
+
+export const Verify = (event: APIGatewayProxyEventV2) => {
 	const httpMethod = event.requestContext.http.method.toLowerCase();
 	if (httpMethod === "post") {
 		return service.VerifyUser(event);
@@ -23,7 +34,7 @@ export const Verify = middy((event: APIGatewayProxyEventV2) => {
 	} else {
 		return service.ResponseWithError(event);
 	}
-}).use(bodyParser());
+};
 
 export const Profile = middy((event: APIGatewayProxyEventV2) => {
 	const httpMethod = event.requestContext.http.method.toLowerCase();

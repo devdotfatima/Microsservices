@@ -103,4 +103,15 @@ export class CartRepository extends DBOperation {
 		}
 		return result.rows[0] as CartItemModel[];
 	}
+
+	async updateCartItemById(itemId: number, qty: number) {
+		const queryString =
+			"UPDATE cart_items SET item_qty=$1 WHERE item_id=$2 RETURNING *";
+		const values = [qty, itemId];
+		const result = await this.executeQuery(queryString, values);
+		if (result.rowCount < 1) {
+			return false;
+		}
+		return result.rows[0] as CartItemModel;
+	}
 }

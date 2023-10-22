@@ -26,6 +26,7 @@ custom:
 functions:
   signup:
     handler: app/handler.Signup
+    timeout: 20
     events:
       - httpApi:
           path: /signup
@@ -33,6 +34,7 @@ functions:
 
   login:
     handler: app/handler.Login
+    timeout: 20
     events:
       - httpApi:
           path: /login
@@ -40,6 +42,7 @@ functions:
 
   verify:
     handler: app/handler.Verify
+    timeout: 20
     events:
       - httpApi:
           path: /verify
@@ -50,6 +53,7 @@ functions:
 
   profile:
     handler: app/handler.Profile
+    timeout: 20
     events:
       - httpApi:
           path: /user

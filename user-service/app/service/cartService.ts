@@ -116,4 +116,19 @@ export class CartService {
 			return ErrorResponse(500, error);
 		}
 	}
+
+	async DeleteCart(event: APIGatewayProxyEventV2) {
+		try {
+			const token = event.headers.authorization;
+			const payload = await VerifyToken(token);
+			const cartItemId = Number(event.pathParameters.id);
+			if (!payload) return ErrorResponse(403, "authorization failed!");
+
+			const deletedItem = await this.repository.deleteCartItem(cartItemId);
+			return SuccessResponse(deletedItem);
+		} catch (error) {
+			console.log(error);
+			return ErrorResponse(500, error);
+		}
+	}
 }

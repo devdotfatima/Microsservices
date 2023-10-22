@@ -34,7 +34,7 @@ export class UserService {
 
 	async CreateUser(event: APIGatewayProxyEventV2) {
 		try {
-			const input = plainToClass(SignupInput, event.body);
+			const input = plainToClass(SignupInput, JSON.parse(event.body!));
 			const error = await AppValidationError(input);
 			if (error) return ErrorResponse(404, error);
 
@@ -57,7 +57,7 @@ export class UserService {
 
 	async UserLogin(event: APIGatewayProxyEventV2) {
 		try {
-			const input = plainToClass(LoginInput, event.body);
+			const input = plainToClass(LoginInput, JSON.parse(event.body!));
 			const error = await AppValidationError(input);
 			if (error) return ErrorResponse(404, error);
 			const data = await this.repository.findAccount(input.email);
@@ -130,7 +130,7 @@ export class UserService {
 			const payload = await VerifyToken(token);
 			if (!payload) return ErrorResponse(403, "authorization failed");
 
-			const input = plainToClass(ProfileInput, event.body);
+			const input = plainToClass(ProfileInput, JSON.parse(event.body!));
 			const error = await AppValidationError(input);
 			if (error) {
 				return ErrorResponse(404, error);
@@ -154,7 +154,7 @@ export class UserService {
 			const payload = await VerifyToken(token);
 			if (!payload) return ErrorResponse(403, "authorization failed");
 
-			const input = plainToClass(ProfileInput, event.body);
+			const input = plainToClass(ProfileInput, JSON.parse(event.body!));
 			const error = await AppValidationError(input);
 			if (error) {
 				return ErrorResponse(404, error);

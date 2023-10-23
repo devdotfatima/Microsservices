@@ -12,50 +12,22 @@ export const Login = (event: APIGatewayProxyEventV2) => {
 	return service.UserLogin(event);
 };
 
-// export const Verify = middy((event: APIGatewayProxyEventV2) => {
-// 	const httpMethod = event.requestContext.http.method.toLowerCase();
-// 	if (httpMethod === "post") {
-// 		return service.VerifyUser(event);
-// 	} else if (httpMethod === "get") {
-// 		return service.GetVerificationToken(event);
-// 	} else {
-// 		return service.ResponseWithError(event);
-// 	}
-// }).use(bodyParser());
+export const GetVerificationCode = (event: APIGatewayProxyEventV2) => {
+	return service.GetVerificationToken(event);
+};
 
 export const Verify = (event: APIGatewayProxyEventV2) => {
-	const httpMethod = event.requestContext.http.method.toLowerCase();
-	if (httpMethod === "post") {
-		return service.VerifyUser(event);
-	} else if (httpMethod === "get") {
-		return service.GetVerificationToken(event);
-	} else {
-		return service.ResponseWithError(event);
-	}
+	return service.VerifyUser(event);
 };
 
-export const Profile = (event: APIGatewayProxyEventV2) => {
-	const httpMethod = event.requestContext.http.method.toLowerCase();
-	if (httpMethod === "post") {
-		return service.CreateProfile(event);
-	} else if (httpMethod === "put") {
-		return service.EditProfile(event);
-	} else if (httpMethod === "get") {
-		return service.GetProfile(event);
-	} else {
-		return service.ResponseWithError(event);
-	}
+export const CreateProfile = (event: APIGatewayProxyEventV2) => {
+	return service.CreateProfile(event);
 };
 
-export const Payment = (event: APIGatewayProxyEventV2) => {
-	const httpMethod = event.requestContext.http.method.toLowerCase();
-	if (httpMethod === "post") {
-		// return service.CreatePaymentMethod(event);
-	} else if (httpMethod === "put") {
-		// return service.UpdatePaymentMethod(event);
-	} else if (httpMethod === "get") {
-		// return service.GetPaymentMethod(event);
-	} else {
-		return service.ResponseWithError(event);
-	}
+export const EditProfile = (event: APIGatewayProxyEventV2) => {
+	return service.EditProfile(event);
+};
+
+export const GetProfile = (event: APIGatewayProxyEventV2) => {
+	return service.GetProfile(event);
 };

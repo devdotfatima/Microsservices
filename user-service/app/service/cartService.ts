@@ -28,7 +28,7 @@ export class CartService {
 			const payload = await VerifyToken(token);
 			if (!payload) return ErrorResponse(403, "authorization failed");
 
-			const input = plainToClass(CartInput, event.body);
+			const input = plainToClass(CartInput, JSON.parse(event.body!));
 			const error = await AppValidationError(input);
 			if (error) {
 				return ErrorResponse(404, error);
@@ -99,7 +99,7 @@ export class CartService {
 			const cartItemId = Number(event.pathParameters.id);
 			if (!payload) return ErrorResponse(403, "authorization failed!");
 
-			const input = plainToClass(UpdateCartInput, event.body);
+			const input = plainToClass(UpdateCartInput, JSON.parse(event.body!));
 			const error = await AppValidationError(input);
 			if (error) return ErrorResponse(404, error);
 
@@ -131,4 +131,53 @@ export class CartService {
 			return ErrorResponse(500, error);
 		}
 	}
+
+	async CollectPayment(event: APIGatewayProxyEventV2) {
+		try {
+			const token = event.headers.authorization;
+			const payload = await VerifyToken(token);
+			if (!payload) return ErrorResponse(403, "authorization failed!");
+
+			// initilize Payment gateway
+
+			// authenticate payment confirmation
+
+			// get cart items
+
+			const cartItems = await this.repository.findCartItems(payload.user_id);
+
+			// Send SNS topic to create Order [Transaction MS] => email to user
+			const params = {
+				Message: JSON.stringify(cartItems),
+				TopicArn: process.env.SNS_TOPIC,
+				MessageAttributes: {
+					actionType: {
+						DataType: "String",
+						StringValue: "place_order",
+					},
+				},
+			};
+			const sns = new aws.SNS();
+			const response = await sns.publish(params).promise();
+
+			// Send tentative message to user
+
+			return SuccessResponse({ msg: "Payment Processing...", response });
+		} catch (error) {
+			console.log(error);
+			return ErrorResponse(500, error);
+		}
+	}
+
+	// async GetOrders(event: APIGatewayProxyEventV2) {
+	//   return SucessResponse({ msg: "get orders..." });
+	// }
+
+	// async GetOrder(event: APIGatewayProxyEventV2) {
+	//   return SucessResponse({ msg: "get order by id..." });
+	// }
+
+	// async CreatePayment(event: APIGatewayProxyEventV2) {
+	//   return SucessResponse({ msg: "get order by id..." });
+	// }
 }

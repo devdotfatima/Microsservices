@@ -5,6 +5,7 @@ plugins:
   - serverless-offline
   - serverless-plugin-typescript
   - serverless-dotenv-plugin
+  - serverless-plugin-optimize
 
 useDotenv: true
 
@@ -16,6 +17,17 @@ provider:
   region: eu-central-1
   httpApi:
     cors: true
+    # SNS Topic
+  environment:
+    SNS_TOPIC: { Ref: CustomerTopic }
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "sns:Publish"
+          Resource:
+            - !Ref CustomerTopic
 
 custom:
   stage: "dev"
@@ -46,51 +58,101 @@ functions:
     events:
       - httpApi:
           path: /verify
-          method: get
-      - httpApi:
-          path: /verify
           method: post
 
-  profile:
-    handler: app/handler.Profile
+  get-verification-code:
+    handler: app/handler.GetVerificationCode
+    timeout: 20
+    events:
+      - httpApi:
+          path: /verify
+          method: get
+
+  create-profile:
+    handler: app/handler.CreateProfile
     timeout: 20
     events:
       - httpApi:
           path: /user
           method: post
+
+  edit-profile:
+    handler: app/handler.EditProfile
+    timeout: 20
+    events:
       - httpApi:
           path: /user
           method: put
+
+  get-profile:
+    handler: app/handler.GetProfile
+    timeout: 20
+    events:
       - httpApi:
           path: /user
           method: get
 
-  cart:
-    handler: app/handler.Cart
+  # Cart Section
+  create-cart:
+    handler: app/handler.CreateCart
     timeout: 20
     events:
       - httpApi:
           path: /cart
           method: post
+
+  edit-cart:
+    handler: app/handler.EditCart
+    timeout: 20
+    events:
       - httpApi:
           path: /cart/{id}
           method: put
+
+  get-cart:
+    handler: app/handler.GetCart
+    timeout: 20
+    events:
       - httpApi:
           path: /cart
           method: get
+
+  delete-cart:
+    handler: app/handler.DeleteCart
+    timeout: 20
+    events:
       - httpApi:
           path: /cart/{id}
           method: delete
 
-  payment:
-    handler: app/handler.Payment
+  collect-payment:
+    handler: app/handler.CollectPayment
+    timeout: 20
     events:
       - httpApi:
-          path: /payment
+          path: /collect-payment
           method: post
+
+  create-order:
+    handler: app/handler.CreateOrder
+    timeout: 20
+    events:
       - httpApi:
-          path: /payment
-          method: put
-      - httpApi:
-          path: /payment
-          method: get
+          path: /order
+          method: post
+
+resources:
+  Resources:
+    CustomerTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: "customer sns topic description"
+        TopicName: CustomerTopic
+
+  # output for later usages
+  Outputs:
+    CustomerTopicInfo:
+      Description: customer-topic
+      Value: !Ref CustomerTopic
+      Export:
+        Name: customer-topic

@@ -13,6 +13,7 @@ import { UserRepository } from "../repository/userRepository";
 import {
 	APPLICATION_FEE,
 	CreatePaymentSession,
+	RetrivePayment,
 	STRIPE_FEE,
 } from "../utility/payment";
 
@@ -91,6 +92,7 @@ export class CartService {
 			const payload = await VerifyToken(token);
 			if (!payload) return ErrorResponse(403, "authorization failed");
 			const cartItems = await this.repository.findCartItems(payload.user_id);
+			console.log(cartItems);
 			const totalAmount = cartItems.reduce(
 				(sum, item) => sum + item.price * item.item_qty,
 				0
@@ -193,30 +195,42 @@ export class CartService {
 			const payload = await VerifyToken(token);
 			if (!payload) return ErrorResponse(403, "authorization failed!");
 
-			// Send SNS topic to create Order [Transaction MS] => email to user
-			const cartItems = await this.repository.findCartItems(payload.user_id);
+			const { payment_id } = await new UserRepository().getUserProfile(
+				payload.user_id
+			);
 
-			const params = {
-				Message: JSON.stringify(cartItems),
-				TopicArn: process.env.SNS_TOPIC,
-				MessageAttributes: {
-					actionType: {
-						DataType: "String",
-						StringValue: "place_order",
-					},
-				},
-			};
-			const sns = new aws.SNS();
-			const response = await sns.publish(params).promise();
+			console.log(payment_id);
 
-			// Send tentative message to user
+			const paymentInfo = await RetrivePayment(payment_id);
+			console.log(paymentInfo);
 
-			return SuccessResponse({ msg: "Payment Processing...", response });
+			if (paymentInfo.status === "succeeded") {
+				// const cartItems = await this.repository.findCartItems(payload.user_id);
+
+				// // Send SNS topic to create Order [Transaction MS] => email to user
+				// const params = {
+				//   Message: JSON.stringify(cartItems),
+				//   TopicArn: process.env.SNS_TOPIC,
+				//   MessageAttributes: {
+				//     actionType: {
+				//       DataType: "String",
+				//       StringValue: "place_order",
+				//     },
+				//   },
+				// };
+				// const sns = new aws.SNS();
+				// const response = await sns.publish(params).promise();
+				// console.log(response);
+				return SuccessResponse({ msg: "success", paymentInfo });
+			}
+
+			return ErrorResponse(503, new Error("payment failed!"));
 		} catch (error) {
 			console.log(error);
 			return ErrorResponse(500, error);
 		}
 	}
+
 	// async GetOrders(event: APIGatewayProxyEventV2) {
 	//   return SucessResponse({ msg: "get orders..." });
 	// }

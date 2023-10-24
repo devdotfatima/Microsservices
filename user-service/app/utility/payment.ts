@@ -23,6 +23,8 @@ const stripe = new Stripe(STRIPE_SECRET_KEY, {
 export const CreatePaymentSession = async ({
 	email,
 	phone,
+	customerName,
+	customerAddress,
 	amount,
 	customerId,
 }: CreatePaymentSessionInput) => {
@@ -40,9 +42,21 @@ export const CreatePaymentSession = async ({
 
 	const { client_secret, id } = await stripe.paymentIntents.create({
 		customer: currentCustomerId,
+
+		shipping: {
+			name: customerName,
+			address: {
+				line1: customerAddress.address_line1,
+				postal_code: customerAddress.post_code,
+				city: customerAddress.city,
+				country: customerAddress.country,
+			},
+		},
+
 		payment_method_types: ["card"],
 		amount: parseInt(`${amount * 100}`), // need to assign as cents
 		currency: "usd",
+		description: "Software development services",
 	});
 
 	return {

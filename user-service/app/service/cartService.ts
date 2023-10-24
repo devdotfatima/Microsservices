@@ -154,7 +154,7 @@ export class CartService {
 			if (!payload) return ErrorResponse(403, "authorization failed!");
 
 			// initilize Payment gateway
-			const { stripe_id, email, phone } =
+			const { stripe_id, email, phone, first_name, last_name, address } =
 				await new UserRepository().getUserProfile(payload.user_id);
 			// get cart items
 			const cartItems = await this.repository.findCartItems(payload.user_id);
@@ -174,6 +174,8 @@ export class CartService {
 					email,
 					phone,
 					customerId: stripe_id,
+					customerAddress: address[0],
+					customerName: first_name + last_name,
 				});
 
 			await new UserRepository().updateUserPayment({

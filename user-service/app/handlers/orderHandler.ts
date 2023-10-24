@@ -7,6 +7,10 @@ const cartService = new CartService(new CartRepository());
 export const CollectPayment = (event: APIGatewayProxyEventV2) => {
 	return cartService.CollectPayment(event);
 };
+export const PlaceOrder = (event: APIGatewayProxyEventV2) => {
+	return cartService.PlaceOrder(event);
+};
+
 // export const GetOrders = middy((event: APIGatewayProxyEventV2) => {
 //   return cartService.GetOrders(event);
 // }).use(bodyParser());

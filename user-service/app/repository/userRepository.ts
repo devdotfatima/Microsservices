@@ -97,7 +97,7 @@ export class UserRepository extends DBOperation {
 
 	async getUserProfile(userId: number) {
 		const profileQuery =
-			"SELECT first_name, last_name, email, phone, user_type, verified FROM users WHERE user_id = $1";
+			"SELECT first_name, last_name, email, phone, user_type, verified, stripe_id, payment_id  FROM users WHERE user_id = $1";
 		const profileValues = [userId];
 		const profileResult = await this.executeQuery(profileQuery, profileValues);
 		if (profileResult.rowCount < 1) {

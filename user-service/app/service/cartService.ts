@@ -9,6 +9,12 @@ import { CartRepository } from "../repository/cartRepository";
 import { CartInput, UpdateCartInput } from "../models/dto/cartInput";
 import { PullData } from "../message-queue";
 import { CartItemModel } from "../models/CartItemModel";
+import { UserRepository } from "../repository/userRepository";
+import {
+	APPLICATION_FEE,
+	CreatePaymentSession,
+	STRIPE_FEE,
+} from "../utility/payment";
 
 @autoInjectable()
 export class CartService {
@@ -84,8 +90,15 @@ export class CartService {
 			const token = event.headers.authorization;
 			const payload = await VerifyToken(token);
 			if (!payload) return ErrorResponse(403, "authorization failed");
-			const result = await this.repository.findCartItems(payload.user_id);
-			return SuccessResponse(result);
+			const cartItems = await this.repository.findCartItems(payload.user_id);
+			const totalAmount = cartItems.reduce(
+				(sum, item) => sum + item.price * item.item_qty,
+				0
+			);
+
+			const appFee = APPLICATION_FEE(totalAmount) + STRIPE_FEE(totalAmount);
+
+			return SuccessResponse({ cartItems, totalAmount, appFee });
 		} catch (error) {
 			console.log(error);
 			return ErrorResponse(500, error);
@@ -139,14 +152,50 @@ export class CartService {
 			if (!payload) return ErrorResponse(403, "authorization failed!");
 
 			// initilize Payment gateway
-
-			// authenticate payment confirmation
-
+			const { stripe_id, email, phone } =
+				await new UserRepository().getUserProfile(payload.user_id);
 			// get cart items
-
 			const cartItems = await this.repository.findCartItems(payload.user_id);
 
+			const total = cartItems.reduce(
+				(sum, item) => sum + item.price * item.item_qty,
+				0
+			);
+
+			const appFee = APPLICATION_FEE(total);
+			const stripeFee = STRIPE_FEE(total);
+			const amount = total + appFee + stripeFee;
+			// authenticate payment confirmation
+			const { secret, publishableKey, customerId, paymentId } =
+				await CreatePaymentSession({
+					amount,
+					email,
+					phone,
+					customerId: stripe_id,
+				});
+
+			await new UserRepository().updateUserPayment({
+				userId: payload.user_id,
+				customerId,
+				paymentId,
+			});
+
+			return SuccessResponse({ secret, publishableKey });
+		} catch (error) {
+			console.log(error);
+			return ErrorResponse(500, error);
+		}
+	}
+
+	async PlaceOrder(event: APIGatewayProxyEventV2) {
+		try {
+			const token = event.headers.authorization;
+			const payload = await VerifyToken(token);
+			if (!payload) return ErrorResponse(403, "authorization failed!");
+
 			// Send SNS topic to create Order [Transaction MS] => email to user
+			const cartItems = await this.repository.findCartItems(payload.user_id);
+
 			const params = {
 				Message: JSON.stringify(cartItems),
 				TopicArn: process.env.SNS_TOPIC,
@@ -168,7 +217,6 @@ export class CartService {
 			return ErrorResponse(500, error);
 		}
 	}
-
 	// async GetOrders(event: APIGatewayProxyEventV2) {
 	//   return SucessResponse({ msg: "get orders..." });
 	// }

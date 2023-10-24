@@ -19,3 +19,40 @@ export const STRIPE_FEE = (totalAmount: number) => {
 const stripe = new Stripe(STRIPE_SECRET_KEY, {
 	apiVersion: "2023-10-16",
 });
+
+export const CreatePaymentSession = async ({
+	email,
+	phone,
+	amount,
+	customerId,
+}: CreatePaymentSessionInput) => {
+	let currentCustomerId: string;
+
+	if (customerId) {
+		const customer = await stripe.customers.retrieve(customerId);
+		currentCustomerId = customer.id;
+	} else {
+		const customer = await stripe.customers.create({
+			email,
+		});
+		currentCustomerId = customer.id;
+	}
+
+	const { client_secret, id } = await stripe.paymentIntents.create({
+		customer: currentCustomerId,
+		payment_method_types: ["card"],
+		amount: parseInt(`${amount * 100}`), // need to assign as cents
+		currency: "usd",
+	});
+
+	return {
+		secret: client_secret,
+		publishableKey: STRIPE_PUBLISHABLE_KEY,
+		paymentId: id,
+		customerId: currentCustomerId,
+	};
+};
+
+export const RetrivePayment = async (paymentId: string) => {
+	return stripe.paymentIntents.retrieve(paymentId);
+};

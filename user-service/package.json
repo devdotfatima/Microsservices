@@ -25,6 +25,7 @@
     "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",
     "serverless-dotenv-plugin": "^6.0.0",
+    "stripe": "^14.1.0",
     "tsyringe": "^4.8.0",
     "twilio": "^4.18.0"
   },

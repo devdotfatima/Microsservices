@@ -101,7 +101,7 @@ export class CartRepository extends DBOperation {
 		if (result.rowCount < 1) {
 			return [];
 		}
-		return result.rows[0] as CartItemModel[];
+		return result.rows as CartItemModel[];
 	}
 
 	async updateCartItemById(itemId: number, qty: number) {

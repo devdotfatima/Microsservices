@@ -133,8 +133,8 @@ functions:
           path: /collect-payment
           method: post
 
-  create-order:
-    handler: app/handler.CreateOrder
+  place-order:
+    handler: app/handler.PlaceOrder
     timeout: 20
     events:
       - httpApi:

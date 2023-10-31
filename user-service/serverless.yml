@@ -19,7 +19,7 @@ provider:
     cors: true
     # SNS Topic
   environment:
-    SNS_TOPIC: { Ref: CustomerTopic }
+    SNS_TOPIC: arn:aws:sns:eu-central-1:052946684375:CustomerTopic
   iam:
     role:
       statements:
@@ -156,3 +156,6 @@ resources:
       Value: !Ref CustomerTopic
       Export:
         Name: customer-topic
+
+package:
+  individually: true

@@ -201,28 +201,30 @@ export class CartService {
 				payload.user_id
 			);
 
-			console.log(payment_id);
-
 			const paymentInfo = await RetrivePayment(payment_id);
 			console.log(paymentInfo);
 
 			if (paymentInfo.status === "succeeded") {
-				// const cartItems = await this.repository.findCartItems(payload.user_id);
+				const cartItems = await this.repository.findCartItems(payload.user_id);
 
-				// // Send SNS topic to create Order [Transaction MS] => email to user
-				// const params = {
-				//   Message: JSON.stringify(cartItems),
-				//   TopicArn: process.env.SNS_TOPIC,
-				//   MessageAttributes: {
-				//     actionType: {
-				//       DataType: "String",
-				//       StringValue: "place_order",
-				//     },
-				//   },
-				// };
-				// const sns = new aws.SNS();
-				// const response = await sns.publish(params).promise();
-				// console.log(response);
+				// Send SNS topic to create Order [Transaction MS] => email to user
+				const params = {
+					Message: JSON.stringify({
+						userId: payload.user_id,
+						items: cartItems,
+						transaction: paymentInfo,
+					}),
+					TopicArn: process.env.SNS_TOPIC,
+					MessageAttributes: {
+						actionType: {
+							DataType: "String",
+							StringValue: "place_order",
+						},
+					},
+				};
+				const sns = new aws.SNS();
+				const response = await sns.publish(params).promise();
+				console.log(response);
 				return SuccessResponse({ msg: "success", paymentInfo });
 			}
 

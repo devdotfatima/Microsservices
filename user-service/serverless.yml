@@ -38,7 +38,7 @@ custom:
 functions:
   signup:
     handler: app/handler.Signup
-    timeout: 20
+    timeout: 30
     events:
       - httpApi:
           path: /signup
@@ -46,7 +46,7 @@ functions:
 
   login:
     handler: app/handler.Login
-    timeout: 20
+    timeout: 30
     events:
       - httpApi:
           path: /login
@@ -54,7 +54,7 @@ functions:
 
   verify:
     handler: app/handler.Verify
-    timeout: 20
+    timeout: 30
     events:
       - httpApi:
           path: /verify
@@ -62,7 +62,7 @@ functions:
 
   get-verification-code:
     handler: app/handler.GetVerificationCode
-    timeout: 20
+    timeout: 30
     events:
       - httpApi:
           path: /verify
@@ -70,7 +70,7 @@ functions:
 
   create-profile:
     handler: app/handler.CreateProfile
-    timeout: 20
+    timeout: 30
     events:
       - httpApi:
           path: /user
@@ -78,7 +78,7 @@ functions:
 
   edit-profile:
     handler: app/handler.EditProfile
-    timeout: 20
+    timeout: 30
     events:
       - httpApi:
           path: /user
@@ -86,7 +86,7 @@ functions:
 
   get-profile:
     handler: app/handler.GetProfile
-    timeout: 20
+    timeout: 30
     events:
       - httpApi:
           path: /user
@@ -95,7 +95,7 @@ functions:
   # Cart Section
   create-cart:
     handler: app/handler.CreateCart
-    timeout: 20
+    timeout: 30
     events:
       - httpApi:
           path: /cart
@@ -103,7 +103,7 @@ functions:
 
   edit-cart:
     handler: app/handler.EditCart
-    timeout: 20
+    timeout: 30
     events:
       - httpApi:
           path: /cart/{id}
@@ -111,7 +111,7 @@ functions:
 
   get-cart:
     handler: app/handler.GetCart
-    timeout: 20
+    timeout: 30
     events:
       - httpApi:
           path: /cart
@@ -119,7 +119,7 @@ functions:
 
   delete-cart:
     handler: app/handler.DeleteCart
-    timeout: 20
+    timeout: 30
     events:
       - httpApi:
           path: /cart/{id}
@@ -140,6 +140,30 @@ functions:
       - httpApi:
           path: /order
           method: post
+
+  joinSellerProgram:
+    handler: app/handler.JoinSellerProgram
+    timeout: 50
+    events:
+      - httpApi:
+          path: /join
+          method: post
+
+  getPaymentMethod:
+    handler: app/handler.GetPaymentMethods
+    timeout: 50
+    events:
+      - httpApi:
+          path: /payment-methods
+          method: get
+
+  editPaymentMethod:
+    handler: app/handler.EditPaymentMethods
+    timeout: 50
+    events:
+      - httpApi:
+          path: /payment-methods/{id}
+          method: put
 
 resources:
   Resources:

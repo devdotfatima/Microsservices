@@ -8,10 +8,10 @@ export class UserRepository extends DBOperation {
 		super();
 	}
 
-	async createAccount({ phone, email, password, salt, userType }: UserModel) {
+	async createAccount({ phone, email, password, salt, user_type }: UserModel) {
 		const queryString =
 			"INSERT INTO users(phone,email,password,salt,user_type) VALUES($1,$2,$3,$4,$5) RETURNING *";
-		const values = [phone, email, password, salt, userType];
+		const values = [phone, email, password, salt, user_type];
 		const result = await this.executeQuery(queryString, values);
 		if (result.rowCount < 1) {
 			throw new Error("user does not exist with provided email id!");
@@ -21,7 +21,7 @@ export class UserRepository extends DBOperation {
 
 	async findAccount(email: string) {
 		const queryString =
-			"SELECT user_id, email, password, phone, salt, verification_code , expiry FROM users WHERE email = $1";
+			"SELECT user_id, email, password, phone, salt, verification_code, user_type, expiry FROM users WHERE email = $1";
 		const values = [email];
 		const result = await this.executeQuery(queryString, values);
 		if (result.rowCount < 1) {

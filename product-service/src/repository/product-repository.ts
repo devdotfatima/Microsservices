@@ -30,6 +30,10 @@ export class ProductRepository {
 			.limit(pages ? pages : 500);
 	}
 
+	async getAllSellerProducts(seller_id: number) {
+		return products.find({ seller_id: seller_id });
+	}
+
 	async getProductById(id: string) {
 		return (await products.findById(id)) as ProductDoc;
 	}

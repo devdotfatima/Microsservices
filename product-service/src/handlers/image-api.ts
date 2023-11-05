@@ -3,7 +3,7 @@ import { APIGatewayEvent, APIGatewayProxyResult, Context } from "aws-lambda";
 import { v4 as uuid } from "uuid";
 const S3Client = new S3();
 
-export const handler = async (
+export const imageUploader = async (
 	event: APIGatewayEvent,
 	context: Context
 ): Promise<APIGatewayProxyResult> => {

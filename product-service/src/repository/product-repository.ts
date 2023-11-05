@@ -10,6 +10,7 @@ export class ProductRepository {
 		price,
 		category_id,
 		image_url,
+		seller_id,
 	}: ProductInput): Promise<ProductDoc> {
 		return products.create({
 			name,
@@ -18,6 +19,7 @@ export class ProductRepository {
 			category_id,
 			image_url,
 			availability: true,
+			seller_id,
 		});
 	}
 

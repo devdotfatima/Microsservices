@@ -31,7 +31,7 @@ export const getSellerProducts = async (
 	event: APIGatewayEvent,
 	context: Context
 ): Promise<APIGatewayProxyResult> => {
-	return service.getProducts(event);
+	return service.getSellerProducts(event);
 };
 
 export const editProduct = async (

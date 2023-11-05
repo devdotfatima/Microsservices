@@ -6,6 +6,7 @@ import { ProductInput } from "../models/dto/product-input";
 import { AppValidationError } from "../utility/errors";
 import { CategoryRepository } from "../repository/category-repository";
 import { ServiceInput } from "../models/dto/service-input";
+import { AuthUser } from "../utility/auth";
 
 export class ProductService {
 	repository: ProductRepository;
@@ -15,14 +16,30 @@ export class ProductService {
 
 	async createProduct(event: APIGatewayEvent) {
 		try {
+			const token = event.headers.Authorization;
+			const user = await AuthUser(token);
+			if (!user) return ErrorResponse(403, "authorization failed");
+			if (user.user_type.toUpperCase() !== "SELLER") {
+				return ErrorResponse(
+					403,
+					"you need to join the seller program to create product"
+				);
+			}
+
 			const input = plainToClass(ProductInput, JSON.parse(event.body!));
 			const error = await AppValidationError(input);
 			if (error) return ErrorResponse(404, error);
-			const data = await this.repository.createProduct(input);
+
+			const data = await this.repository.createProduct({
+				...input,
+				seller_id: user.user_id,
+			});
+
 			await new CategoryRepository().addItem({
 				id: input.category_id,
 				products: [data._id],
 			});
+
 			return SuccessResponse(data);
 		} catch (error) {
 			console.log(error);
@@ -73,6 +90,7 @@ export class ProductService {
 
 	// http calls // later stage we will convert this thing to RPC & Queue
 	async handleQueueOperation(event: APIGatewayProxyEvent) {
+		console.log("here");
 		const input = plainToClass(ServiceInput, JSON.parse(event.body!));
 		const error = await AppValidationError(input);
 		if (error) return ErrorResponse(404, error);

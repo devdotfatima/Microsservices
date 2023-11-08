@@ -8,6 +8,7 @@ type CategoryModel = {
 	products: string[];
 	displayOrder: number; // 100 - 1
 	imageUrl: string;
+	seller_id: number;
 };
 
 export type CategoryDoc = mongoose.Document & CategoryModel;
@@ -34,6 +35,7 @@ const categorySchema = new mongoose.Schema(
 		],
 		displayOrder: { type: Number, default: 1 },
 		imageUrl: String,
+		seller_id: Number,
 	},
 	{
 		toJSON: {

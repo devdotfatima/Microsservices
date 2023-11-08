@@ -80,6 +80,16 @@ export class ApiGatewayStack extends Construct {
 			],
 		});
 
+		this.createEndpoints(apgw, {
+			name: "seller_categories",
+			methods: [
+				{
+					methodType: "GET",
+					handler: services.getSellerCategories,
+				},
+			],
+		});
+
 		this.addChildEndpoint(categoryResource, {
 			name: "{id}",
 			methods: [

@@ -25,6 +25,13 @@ export const getCategories = async (
 	return service.getCategories(event);
 };
 
+export const getSellerCategories = async (
+	event: APIGatewayEvent,
+	context: Context
+): Promise<APIGatewayProxyResult> => {
+	return service.getAllSellerCategories(event);
+};
+
 export const editCategory = async (
 	event: APIGatewayEvent,
 	context: Context

@@ -49,6 +49,10 @@ export class ServiceStack extends Construct {
 			),
 			getCategory: this.createHandlers(nodeJsFunctionProps, "getCategory"),
 			getCategories: this.createHandlers(nodeJsFunctionProps, "getCategories"),
+			getSellerCategories: this.createHandlers(
+				nodeJsFunctionProps,
+				"getSellerCategories"
+			),
 			creatDeals: this.createHandlers(nodeJsFunctionProps, "createDeals"),
 			imageUploader: this.createHandlers(nodeJsFunctionProps, "imageUploader"),
 			messageQueueHandler: this.createHandlers(

@@ -16,6 +16,7 @@ export interface ServiceInterface {
 	readonly getCategories: IFunction;
 	readonly getCategory: IFunction;
 	readonly deleteCategory: IFunction;
+	readonly getSellerCategories: IFunction;
 
 	// deals
 	readonly creatDeals: IFunction;

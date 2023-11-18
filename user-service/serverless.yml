@@ -20,6 +20,8 @@ provider:
     # SNS Topic
   environment:
     SNS_TOPIC: arn:aws:sns:eu-central-1:052946684375:CustomerTopic
+    NOTIFY_TOPIC:
+      "Fn::ImportValue": "notifySvcArn"
   iam:
     role:
       statements:
@@ -28,6 +30,7 @@ provider:
             - "sns:Publish"
           Resource:
             - !Ref CustomerTopic
+            - "Fn::ImportValue": "notifySvcArn"
 
 custom:
   stage: "dev"
